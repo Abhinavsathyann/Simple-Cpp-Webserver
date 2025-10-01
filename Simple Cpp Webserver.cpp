@@ -18,7 +18,7 @@ static const string INDEX_HTML = R"(<!doctype html>
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Home - C++ Website</title>
+  <title>Home</title>
 </head>
 <body>
   <h1>Welcome to the Home Page</h1>
