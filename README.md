@@ -1,26 +1,32 @@
-# Simple C++ Webserver
+# C++ Multi-Page Webserver
 
-This is a multi-page C++ webserver built using raw sockets. It serves HTML pages, handles form submissions, and includes a basic JSON API endpoint. This project is intended for learning and educational purposes.
+This project is a **multi-page C++ webserver** built using raw sockets. It demonstrates how to create a simple, educational web application using C++ without external frameworks. The server supports multiple pages, form submissions, JSON APIs, and can be extended for static file serving and dynamic content.
 
 ## Features
 
-* Home, About, Contact, Services, Blog, and Portfolio pages
-* Contact form with POST handling
-* JSON API endpoint (`/api/time`) returning the server time
-* Basic routing and multi-page navigation
-* Easily extendable for more pages or static file support
+* Multi-page support: Home, About, Contact, Services, Blog, Portfolio
+* Contact form with POST handling and dynamic response
+* JSON API endpoints (`/api/time`, `/api/hello?name=...`) for AJAX/JSON requests
+* Basic routing system for page navigation
+* Easy to extend with new pages or static content
+* Cross-platform support (Linux/macOS/WSL recommended, Windows via WSL)
 
 ## Requirements
 
-* C++17 compiler (g++ recommended)
-* Linux/macOS/WSL recommended due to socket API compatibility
-* Windows users may need WSL or MinGW
+* **C++17 compatible compiler** (g++ recommended)
+* **Linux/macOS/WSL** for full socket compatibility
+* Optional: Windows users can use **MinGW** or **WSL**
 
 ## Installation
 
-1. Clone the repository or download the source code.
-2. Open terminal in project directory.
-3. Compile the code:
+### Step 1: Clone or Download
+
+```bash
+git clone <repository_url>
+cd <repository_folder>
+```
+
+### Step 2: Compile
 
 ```bash
 # Linux/macOS/WSL
@@ -30,7 +36,7 @@ g++ -std=c++17 simple_cpp_webserver.cpp -o simple_server
 g++ -std=c++17 simple_cpp_webserver.cpp -o simple_server.exe
 ```
 
-## Running the Server
+### Step 3: Run the Server
 
 ```bash
 # Linux/macOS/WSL
@@ -40,8 +46,8 @@ g++ -std=c++17 simple_cpp_webserver.cpp -o simple_server.exe
 simple_server.exe
 ```
 
-* The server runs on **port 8080** by default.
-* You can specify a different port:
+* The server defaults to **port 8080**.
+* Specify a custom port:
 
 ```bash
 ./simple_server 3000
@@ -59,15 +65,37 @@ http://localhost:8080/services
 http://localhost:8080/blog
 http://localhost:8080/portfolio
 http://localhost:8080/api/time
+http://localhost:8080/api/hello?name=Abhinav
 ```
+
+## Project Structure
+
+* `simple_cpp_webserver.cpp` - main server code with routing, form handling, and API
+* `README.md` - project documentation
+* `public/` (optional) - folder to serve static files like CSS, JS, images
+
+## Extending the Server
+
+* **Add Pages:** Define new HTML strings and route paths in the main loop.
+* **Static File Support:** Serve CSS/JS/images from `public/` folder.
+* **Multi-threading:** Implement threads to handle multiple simultaneous clients.
+* **Dynamic Templates:** Integrate simple template system for reusable layouts.
+* **API Expansion:** Add more JSON endpoints for AJAX requests.
+
+## Troubleshooting
+
+* `g++ not recognized` on Windows: Install **MinGW** and add it to PATH or use **WSL**.
+* Port in use: Change server port with `./simple_server <port>`.
+* Browser shows 404: Check that the path exists and matches your routing logic.
 
 ## Future Improvements
 
-* Add static file serving for CSS, JS, and images
-* Implement multi-threading to handle multiple clients
-* Add template rendering for dynamic HTML
-* Improve error handling and request parsing
+* Full static file serving with caching
+* User authentication and sessions
+* Logging requests and errors
+* HTTPS support using OpenSSL
+* Database integration for dynamic content
 
 ## License
 
-This project is open-source and free to use for educational purposes.
+Open-source and free for educational purposes. Contributions are welcome.
