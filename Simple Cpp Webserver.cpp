@@ -18,16 +18,56 @@ static const string INDEX_HTML = R"(<!doctype html>
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Simple C++ Website</title>
+  <title>Home - C++ Website</title>
 </head>
 <body>
-  <h1>Welcome to the C++ Website</h1>
-  <p>This page is served by a minimal C++ HTTP server.</p>
-  <form method="POST" action="/submit">
-    <label for="name">Your name:</label>
-    <input id="name" name="name" type="text" placeholder="Type your name">
+  <h1>Welcome to the Home Page</h1>
+  <p>This is the homepage served by C++.</p>
+  <nav>
+    <a href="/">Home</a> |
+    <a href="/about">About</a> |
+    <a href="/contact">Contact</a>
+  </nav>
+</body>
+</html>)";
+
+static const string ABOUT_HTML = R"(<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>About - C++ Website</title>
+</head>
+<body>
+  <h1>About Page</h1>
+  <p>This website is powered by a minimal C++ HTTP server.</p>
+  <nav>
+    <a href="/">Home</a> |
+    <a href="/about">About</a> |
+    <a href="/contact">Contact</a>
+  </nav>
+</body>
+</html>)";
+
+static const string CONTACT_HTML = R"(<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Contact - C++ Website</title>
+</head>
+<body>
+  <h1>Contact Page</h1>
+  <form method="POST" action="/contact">
+    <label for="name">Your Name:</label>
+    <input type="text" id="name" name="name"><br><br>
+    <label for="message">Message:</label>
+    <textarea id="message" name="message"></textarea><br><br>
     <button type="submit">Send</button>
   </form>
+  <nav>
+    <a href="/">Home</a> |
+    <a href="/about">About</a> |
+    <a href="/contact">Contact</a>
+  </nav>
 </body>
 </html>)";
 
@@ -53,7 +93,6 @@ string not_found_response() {
     return oss.str();
 }
 
-// url-decode simple
 string url_decode(const string &s) {
     string out;
     out.reserve(s.size());
@@ -69,7 +108,6 @@ string url_decode(const string &s) {
     return out;
 }
 
-// parse body like name=Abhinav&foo=bar and extract 'name'
 string extract_field(const string &body, const string &field) {
     size_t pos = 0;
     while (pos < body.size()) {
@@ -125,7 +163,7 @@ int main(int argc, char *argv[]) {
     int port = 8080;
     if (argc >= 2) port = stoi(argv[1]);
 
-    cout << "Starting simple C++ web server on port " << port << "\n";
+    cout << "Starting extended C++ web server on port " << port << "\n";
     int server_fd = create_and_bind(port);
     if (server_fd < 0) return 1;
 
@@ -138,7 +176,6 @@ int main(int argc, char *argv[]) {
             continue;
         }
 
-        // read request (very naive; assumes request fits into buffer)
         const int BUF_SIZE = 8192;
         string req;
         req.resize(BUF_SIZE);
@@ -149,7 +186,6 @@ int main(int argc, char *argv[]) {
         }
         req.resize(received);
 
-        // parse request line
         istringstream reqstream(req);
         string request_line;
         getline(reqstream, request_line);
@@ -161,21 +197,26 @@ int main(int argc, char *argv[]) {
             rl >> method >> path >> version;
         }
 
-        // find end of headers
         size_t header_end = req.find("\r\n\r\n");
-        string headers = (header_end == string::npos) ? string() : req.substr(0, header_end + 4);
         string body;
         if (header_end != string::npos) body = req.substr(header_end + 4);
 
         if (method == "GET" && (path == "/" || path == "/index.html")) {
             string resp = http_response(INDEX_HTML);
             send(client_fd, resp.c_str(), resp.size(), 0);
-        } else if (method == "POST" && path == "/submit") {
-            // If body incomplete (very naive), we won't support large uploads in this demo.
+        } else if (method == "GET" && path == "/about") {
+            string resp = http_response(ABOUT_HTML);
+            send(client_fd, resp.c_str(), resp.size(), 0);
+        } else if (method == "GET" && path == "/contact") {
+            string resp = http_response(CONTACT_HTML);
+            send(client_fd, resp.c_str(), resp.size(), 0);
+        } else if (method == "POST" && path == "/contact") {
             string name = extract_field(body, "name");
+            string message = extract_field(body, "message");
             string reply = "<!doctype html><html><body>";
-            reply += "<h1>Thanks! Form received</h1>";
-            reply += "<p>You submitted name: <strong>" + (name.empty() ? "(empty)" : name) + "</strong></p>";
+            reply += "<h1>Message Received</h1>";
+            reply += "<p>Name: <strong>" + (name.empty() ? "(empty)" : name) + "</strong></p>";
+            reply += "<p>Message: <em>" + (message.empty() ? "(empty)" : message) + "</em></p>";
             reply += "<p><a href=\"/\">Go back</a></p>";
             reply += "</body></html>";
             string resp = http_response(reply);
